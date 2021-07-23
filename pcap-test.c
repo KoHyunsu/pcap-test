@@ -46,10 +46,35 @@ void printEthernet(const u_char* packet) {
 void printIp(const u_char* packet) {
 	struct libnet_ipv4_hdr * ipHeader = (struct libnet_ipv4_hdr *)(packet + sizeof(struct libnet_ethernet_hdr));
 	printf("[IP Header] \n");
+	
 	printf("\tsrc ip :\t");
-	printf("%s\n", inet_ntoa(ipHeader->ip_src));
+	
+	for(int i=24; i>=0; i-=8) {
+		printf("%d", (ntohl(ipHeader->ip_src.s_addr) >> i) & 0xff);
+		if(i!=0) {
+			printf(".");
+		} else {
+			printf("\n");
+		}
+	}
+	printf("\n");
+
+	// 코드리뷰 : inet_ntoa()을 printf() 내부에서만 호출 
+	// printf("%s\n", inet_ntoa(ipHeader->ip_src));
+	
 	printf("\tdst ip :\t");
-	printf("%s\n", inet_ntoa(ipHeader->ip_dst));
+
+	for(int i=24; i>=0; i-=8) {
+		printf("%d", (ntohl(ipHeader->ip_dst.s_addr) >> i) & 0xff);
+		if(i!=0) {
+			printf(".");
+		} else {
+			printf("\n");
+		} 
+	}
+	
+	// 코드리뷰 : inet_ntoa()을 printf() 내부에서만 호출
+	// printf("%s\n", inet_ntoa(ipHeader->ip_dst));
 }
 
 void printTcp(const u_char* packet) {
